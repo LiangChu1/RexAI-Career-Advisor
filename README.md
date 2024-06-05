@@ -67,7 +67,7 @@ These instructions will get you a copy of the project up and running on your own
 14. Then Enter `n` for automatc builds and deploys with Github.
 15. Finally deploy everything to Firebase by running: `firebase deploy`. Then your done!!!
 
-## Usage For BackEnd
+## Functionality For BackEnd
 
 The section provdies more info about the following Firebase Cloud Functions:
 
@@ -88,6 +88,10 @@ The section provdies more info about the following Firebase Cloud Functions:
 - `updateLogs`: Updates an existing log event.
 - `deleteLogs`: Deletes a log event  based on its id.
 - `getLogs`: Retrieves a specific log event based on its id.
+
+## Testing for Backend
+In regards to how I when about testing my Firebase Functions, I used Postman and created API requests via HTTP to help ensure that my functions are robust and rebeliable before deployment. For the POST and PUT methods, I tested them by first pasting the http link given by said function within the firebase console, then added a key-value pair header for the Content-type (in that it was application/json), and then added the data body of said request as a raw json object. For the DELETE and GET methods, I tested them by first pasting the http link given by said function within the firebase console, and then added the neccessary query parameters to said http link as a key-value pair. Once, I created my tested, then I clicked the send button to ensure that the Firebase function works as expected. Here's a link to the Postman workspace that I created to test out the different Cloud functions: https://www.postman.com/descent-module-astronomer-60072393/workspace/rex-chatbot-testing/collection/27615271-3a19dec5-23d0-4043-9173-e63235851fdb?action=share&creator=27615271
+
 
 ## Key Features For FrontEnd
 
