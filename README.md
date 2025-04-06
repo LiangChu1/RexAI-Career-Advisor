@@ -1,7 +1,7 @@
 # RexAI-Career-Advisor
 
 ## Description
-RexAI Career Advisor is a personal Software as a Service (SaaS) AI chatbot website that provides users with private and secure career advice. It leverages on the power of AI to deliver engaging and satisfying interactions, helping users navigate their career paths with confidence and clarity.
+RexAI Career Advisor is a personal AI chatbot application that provides users with private and secure career advice. It leverages on the power of AI to deliver engaging and satisfying interactions, helping users navigate their career paths with confidence and clarity.
 
 ## Getting Started
 
