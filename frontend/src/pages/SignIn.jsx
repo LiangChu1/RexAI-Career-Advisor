@@ -42,7 +42,7 @@ function SignIn() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const user = await signIn(emailOrUsername, password);
-        if(user !== null){
+        if (user !== null) {
             navigate('/');
         }
     };

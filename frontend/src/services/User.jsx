@@ -6,14 +6,22 @@
  * @param {ReactNode} props.children - The children components to render inside the UserContext.Provider.
  * @returns {ReactElement} - The UserContext.Provider component with the `user` state and authentication functions as its value.
  */
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 import { auth } from '../api/firebase';
-import { signInWithEmailAndPassword, sendPasswordResetEmail, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from 'firebase/auth';
 export const UserContext = createContext();
 
 export const User = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [alert, setAlert] = useState({ open: false, message: '', severity: 'success' });
 
+    // Subscribe to authentication state changes
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+          setUser(firebaseUser);
+        });
+        return () => unsubscribe();
+    }, []);
 
     /**
      * Signs in a user with the given email and password.
@@ -27,11 +35,11 @@ export const User = ({ children }) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             setUser(userCredential.user);
-            alert("Login Complete");
+            setAlert({ open: true, message: 'Sign in successful!', severity: 'success' });
             return userCredential.user;
         } catch (error) {
             console.error("Login Failed: ", error);
-            alert("Login Failed: ", error);
+            setAlert({ open: true, message: 'Invalid credentials. Please try again.', severity: 'error' });
         }
     };
 
@@ -51,11 +59,11 @@ export const User = ({ children }) => {
             const user = userCredential.user;
             await updateProfile(user, { displayName: displayName });
             setUser(user);
-            alert("Registration Complete");
+            setAlert({ open: true, message: 'Registration successful!', severity: 'success' });
             return user;
         } catch (error) {
             console.error("Registration Failed: ", error);
-            alert("Registration Failed: ", error);
+            setAlert({ open: true, message: 'Registration failed. Please try again.', severity: 'error' });
         }
     };    
 
@@ -69,10 +77,10 @@ export const User = ({ children }) => {
         try {
             await auth.signOut();
             setUser(null);
-            alert("Logout Complete");
+            setAlert({ open: true, message: 'Sign out successful!', severity: 'success' });
         } catch (error) {
             console.error("Logout Failed: ", error);
-            alert("Logout Failed: ", error);
+            setAlert({ open: true, message: 'Logout failed. Please try again.', severity: 'error' });
         }
     };
     
@@ -86,17 +94,18 @@ export const User = ({ children }) => {
     const sendResetEmail = async (email) => {
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("email sent for Password reset");
+            setAlert({ open: true, message: 'Password reset email sent successfully!', severity: 'success' });
             return true;
         } catch (error) {
             console.error("Error resetting password: ", error);
-            alert("Error resetting password: ", error);
+            setAlert({ open: true, message: 'Error resetting password. Please try again.', severity: 'error' });
+            return false;
         }
     };    
     
     // Render the provider for User context
     return (
-        <UserContext.Provider value={{ user, signIn, register, signOut, sendResetEmail }}>
+        <UserContext.Provider value={{ user, alert, setAlert, signIn, register, signOut, sendResetEmail }}>
             {children}
         </UserContext.Provider>
     );

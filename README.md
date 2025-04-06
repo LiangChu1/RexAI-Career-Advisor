@@ -81,7 +81,6 @@ The section provdies more info about the following Firebase Cloud Functions:
 ### message reception APIs
 - `postMessage`: Posts a new message to a chat.
 - `getChatMessages`: Retrieves all messages from a specific chat of a specific user.
-- `getAMessage`: Gets a message from a specific chat of a specific user.
 
 ### log management APIs
 - `postLogs`: Posts a new log event for monitoring and troubleshooting.
@@ -151,12 +150,6 @@ These files help out with rendering the files for the react app.
 
 ### Chat Inbox Page
 ![Chat Inbox Page](PageScreenshots/Chat_Inbox.png)
-
-### Chat Creation Page
-![Chat Creation Page](PageScreenshots/Chat_Creation.png)
-
-### Chat Thread Page
-![Chat Thread Page](PageScreenshots/Chat_Thread.png)
 
 ### Activity Logs Page
 ![Activity Logs Page](PageScreenshots/Activity_Logs.png)

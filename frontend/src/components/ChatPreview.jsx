@@ -12,56 +12,128 @@
  * @param {Function} deleteChatRoom - The function to delete the chat room.
  * @returns {JSX.Element} - A styled container with chat details and action buttons.
  */
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { MainButton, SubButton } from '../styles/SharedStyles';
-import { ChatMessage, ChatName, ChatPreviewContainer, ChatMessageButtonDivider } from '../styles/ChatPreviewStyles';
+import {
+  ChatMessage,
+  ChatName,
+  ChatPreviewContainer,
+  ChatMessageButtonDivider,
+} from '../styles/ChatPreviewStyles';
+import { CircularProgress } from '@mui/material';
 
-function ChatPreview({ chat, updateChatStatus, deleteChatRoom }) {
-    // Hook from react-router-dom to programmatically navigate
-    const navigate = useNavigate();
+function ChatPreview({
+  chat,
+  updateChatStatus,
+  deleteChatRoom,
+  setSelectedChatId,
+  selectedChatId,
+  resetMessages,
+}) {
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isStartingChat, setIsStartingChat] = useState(false);
 
-    // Function to handle chat click, navigates to the chat room
-    const handleChatClick = async (chatId) => {
-        navigate(`/chat/${chatId}`);
-    };
+  const isSelected = chat.chatId === selectedChatId;
 
-    // Function to handle update chat status click, toggles the chat status
-    const handleUpdateChatStatusClick = async (chatId, currentStatus) => {
-        updateChatStatus(chatId, !currentStatus);
-    };
-
-    // Function to handle delete chat room click, deletes the chat room
-    const handleDeleteChatRoom = async (chatId) => {
-        deleteChatRoom(chatId);
+  const handleChatClick = async (chatId) => {
+    setIsStartingChat(true);
+    try {
+      await setSelectedChatId(chatId);
+    } finally {
+      setIsStartingChat(false);
     }
+  };
 
-    // Truncates the most recent message if it's longer than 100 characters
-    const truncatedMessage = chat.mostRecentMessage
-    ? (chat.mostRecentMessage.length > 100 
-        ? `${chat.mostRecentMessage.substring(0, 100)}...` 
-        : chat.mostRecentMessage)
-    : "No messages yet";
+  const handleUpdateChatStatusClick = async (chatId, currentStatus) => {
+    setIsUpdatingStatus(true);
+    try {
+      await updateChatStatus(chatId, !currentStatus);
+      if (!currentStatus === false && selectedChatId === chatId) {
+        setSelectedChatId(null);
+        resetMessages();
+      }
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
 
-    // Returns a styled container with the chat name, truncated message, and buttons for chat actions
-    return (
-        <ChatPreviewContainer key={chat.chatId}>
-            <ChatName>{chat.name}</ChatName>
-            <ChatMessage>{truncatedMessage}</ChatMessage>
-            {chat.isActive ? (
-                <ChatMessageButtonDivider>
-                    <SubButton onClick={() => handleUpdateChatStatusClick(chat.chatId, chat.isActive)}>End Chat</SubButton>
-                    <MainButton onClick={() => handleChatClick(chat.chatId)}>Start Chatting</MainButton>
-                </ChatMessageButtonDivider>
+  const handleDeleteChatRoom = async (chatId) => {
+    setIsDeleting(true);
+    try {
+      await deleteChatRoom(chatId);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const truncatedMessage = chat.mostRecentMessage
+    ? chat.mostRecentMessage.length > 100
+      ? `${chat.mostRecentMessage.substring(0, 100)}...`
+      : chat.mostRecentMessage
+    : 'No messages yet';
+
+  return (
+    <ChatPreviewContainer selected={isSelected}>
+      <ChatName>{chat.name}</ChatName>
+      <ChatMessage>{truncatedMessage}</ChatMessage>
+      {chat.isActive ? (
+        <ChatMessageButtonDivider>
+          <SubButton
+            onClick={() =>
+              handleUpdateChatStatusClick(chat.chatId, chat.isActive)
+            }
+            disabled={isUpdatingStatus}
+          >
+            {isUpdatingStatus ? (
+              <CircularProgress size={16} sx={{ color: '#fff' }} />
             ) : (
-                <ChatMessageButtonDivider>
-                    <SubButton onClick={() => handleDeleteChatRoom(chat.chatId)}>Delete Chat</SubButton>
-                    <MainButton onClick={() => handleUpdateChatStatusClick(chat.chatId, chat.isActive)}>Resume Chat</MainButton>
-                </ChatMessageButtonDivider>
+              'End Chat'
             )}
-        </ChatPreviewContainer>
-    );
+          </SubButton>
+
+          {!isSelected && (
+            <MainButton
+              onClick={() => handleChatClick(chat.chatId)}
+              disabled={isStartingChat}
+            >
+              {isStartingChat ? (
+                <CircularProgress size={16} sx={{ color: '#fff' }} />
+              ) : (
+                'Start Chatting'
+              )}
+            </MainButton>
+          )}
+        </ChatMessageButtonDivider>
+      ) : (
+        <ChatMessageButtonDivider>
+          <SubButton
+            onClick={() => handleDeleteChatRoom(chat.chatId)}
+            disabled={isDeleting}
+          >
+            {isDeleting ? (
+              <CircularProgress size={16} sx={{ color: '#fff' }} />
+            ) : (
+              'Delete Chat'
+            )}
+          </SubButton>
+
+          <MainButton
+            onClick={() =>
+              handleUpdateChatStatusClick(chat.chatId, chat.isActive)
+            }
+            disabled={isUpdatingStatus}
+          >
+            {isUpdatingStatus ? (
+              <CircularProgress size={16} sx={{ color: '#fff' }} />
+            ) : (
+              'Resume Chat'
+            )}
+          </MainButton>
+        </ChatMessageButtonDivider>
+      )}
+    </ChatPreviewContainer>
+  );
 }
 
 export default ChatPreview;
-

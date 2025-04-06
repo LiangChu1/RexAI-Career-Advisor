@@ -1,18 +1,17 @@
 // Importing necessary modules and components
 import React from 'react';
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import Register from './pages/Register';
+import ResetPassword from './pages/ResetPassword';
 import Inbox from './pages/Inbox';
-import ResetPassword from './pages/ResetPassword'
-import ChatCreator from './pages/ChatCreator';
+import ChatActivity from './pages/ChatActivity';
 import { User } from './services/User';
 import { Chats } from './services/Chats';
-import ChatThread from './pages/ChatThread';
 import { Messages } from './services/Messages';
 import { Rex } from './services/Rex';
-import ChatActivity from './pages/ChatActivity';
 
 /**
  * The main App component that wraps all the routes and services.
@@ -21,26 +20,24 @@ import ChatActivity from './pages/ChatActivity';
  */
 function App() {
     return (
+        <Rex>
         <User>
             <Chats>
                 <Messages>
-                    <Rex>
-                    <Router>
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/signin" element={<SignIn />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path='/reset-password' element={<ResetPassword />} />
-                            <Route path='/inbox' element={<Inbox />} />
-                            <Route path='/chat-creator' element={<ChatCreator />} />
-                            <Route path='/chat/:chatId' element={<ChatThread />} />
-                            <Route path='/chat-logs' element={<ChatActivity />} />
-                        </Routes>
-                    </Router>
-                    </Rex>
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/signin" element={<SignIn />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path='/reset-password' element={<ResetPassword />} />
+                        <Route path='/inbox' element={<Inbox />} />
+                        <Route path='/chat-logs' element={<ChatActivity />} />
+                    </Routes>
+                </Router>
                 </Messages>
             </Chats>
         </User>
+        </Rex>
     );
 }
 
